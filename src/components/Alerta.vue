@@ -9,7 +9,7 @@ const props = defineProps({
 });
 
 const isError = computed(()=>{
-    return props.alerta.tipo == 'sucess' ? 'bg-green-500':'bg-red-500'
+    return props.alerta.tipo == 'success' ? 'bg-green-500':'bg-red-500'
 })
 </script>
 <template>
