@@ -1,22 +1,60 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref } from "vue";
 import Alerta from "./Alerta.vue";
+const props = defineProps({
+  nombre: {
+    type: String,
+    required: true,
+  },
+  propietario: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  alta: {
+    type: String,
+    required: true,
+  },
+  sintomas: {
+    type: String,
+    required: true,
+  },
+});
+const alerta = reactive({
+  tipo: "",
+  mensaje: "",
+});
 
-    const alerta = reactive({
-        tipo:'',
-        mensaje:''
-    })
+const validar = () => {
+  if (Object.values(props).includes("")) {
+    alerta.mensaje = "Todos los campos son obligatorios";
+    alerta.tipo = "error";
+    return;
+  }
 
+  emit("guardar-paciente");
+  alerta.mensaje = "Paciente ingresado correctamente";
+  alerta.tipo = "success";
 
-    const validar = ()=>{
-        if (Object.values(paciente).includes('')) {
-            alerta.mensaje='Todos los campos son obligatorios'
-            alerta.tipo = 'error'
-            return
-        }
-    }
+  setTimeout(() => {
+    Object.assign(alerta, {
+      tipo: "",
+      mensaje: "",
+    });
+  }, 3000);
+};
 
-    defineEmits(['update:nombre',])
+const emit = defineEmits([
+  "update:nombre",
+  "update:propietario",
+  "update:email",
+  "update:alta",
+  "update:sintomas",
+  "guardar-paciente",
+]);
 </script>
 
 <template>
@@ -26,12 +64,11 @@ import Alerta from "./Alerta.vue";
       Agregar pacientes
       <span class="text-indigo-600 font-bold">Administrar</span>
     </p>
-    <Alerta
-    v-if="alerta.mensaje"
-    :alerta="alerta"
-    />
-    <form @submit.prevent="validar" class="bg-white shadow-md rounded-lg py-10 px-5 mb-10">
-        {{ paciente.nombre }}
+    <Alerta v-if="alerta.mensaje" :alerta="alerta" />
+    <form
+      @submit.prevent="validar"
+      class="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
+    >
       <div class="mb-5">
         <label for="mascota" class="block text-gray-700 uppercase font-bold"
           >Nombre Mascota</label
@@ -40,8 +77,8 @@ import Alerta from "./Alerta.vue";
           type="text"
           id="mascota"
           class="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md"
+          :value="nombre"
           @input="$emit('update:nombre', $event.target.value)"
-          
         />
       </div>
       <div class="mb-5">
@@ -52,7 +89,8 @@ import Alerta from "./Alerta.vue";
           type="text"
           id="propietario"
           class="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md"
-          v-model="paciente.propietario"
+          :value="propietario"
+          @input="$emit('update:propietario', $event.target.value)"
         />
       </div>
       <div class="mb-5">
@@ -63,7 +101,8 @@ import Alerta from "./Alerta.vue";
           type="email"
           id="email"
           class="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md"
-          v-model="paciente.email"
+          :value="email"
+          @input="$emit('update:email', $event.target.value)"
         />
       </div>
       <div class="mb-5">
@@ -74,7 +113,8 @@ import Alerta from "./Alerta.vue";
           type="date"
           id="alta"
           class="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md"
-          v-model="paciente.alta"
+          @input="$emit('update:alta', $event.target.value)"
+          :value="alta"
         />
       </div>
       <div class="mb-5">
@@ -85,7 +125,8 @@ import Alerta from "./Alerta.vue";
           type="text"
           id="sintomas"
           class="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md h-40"
-          v-model="paciente.sintomas"
+          @input="$emit('update:sintomas', $event.target.value)"
+          :value="sintomas"
         />
       </div>
       <input
